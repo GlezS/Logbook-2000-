@@ -2,211 +2,379 @@
   {
     "year": 2000,
     "week": "2000-01-03",
-    "cod": 4.563
+    "cod": 4.563,
+    "haddock": 1,
+    "redfish": 2.105,
+    "saithe": 9.532,
+    "total": 14.2
   },
   {
     "year": 2000,
     "week": "2000-01-10",
-    "cod": 6.377
+    "cod": 6.377,
+    "haddock": 3.626,
+    "redfish": 2.706,
+    "saithe": 16.688,
+    "total": 26.397
   },
   {
-   "year": 2000,
+    "year": 2000,
     "week": "2000-01-17",
-    "cod": 10.33
+    "cod": 10.33,
+    "haddock": 7.573,
+    "redfish": 4.8,
+    "saithe": 15.321,
+    "total": 35.282
   },
   {
     "year": 2000,
     "week": "2000-01-24",
-    "cod": 15.955
+    "cod": 15.955,
+    "haddock": 4.792,
+    "redfish": 4.775,
+    "saithe": 4.627,
+    "total": 27.149
   },
   {
     "year": 2000,
     "week": "2000-02-07",
-    "cod": 5.271
+    "cod": 5.271,
+    "haddock": 2.633,
+    "redfish": 1.881,
+    "saithe": 1.258,
+    "total": 8.168
   },
   {
     "year": 2000,
     "week": "2000-02-14",
-    "cod": 14.252
+    "cod": 14.252,
+    "haddock": 3.635,
+    "redfish": 3.85,
+    "saithe": 4.75,
+    "total": 23.762
   },
   {
     "year": 2000,
     "week": "2000-02-21",
-    "cod": 8.876
+    "cod": 8.876,
+    "haddock": 5.504,
+    "redfish": 3.275,
+    "saithe": 3.25,
+    "total": 18.295
   },
   {
     "year": 2000,
     "week": "2000-02-28",
-    "cod": 20.191
+    "cod": 20.191,
+    "haddock": 7.767,
+    "redfish": 7.675,
+    "saithe": 4.067,
+    "total": 37.974
   },
   {
     "year": 2000,
     "week": "2000-03-06",
-    "cod": 4.752
+    "cod": 4.752,
+    "haddock": 6.94,
+    "redfish": 2.681,
+    "saithe": 1,
+    "total": 13.813
   },
   {
     "year": 2000,
     "week": "2000-03-13",
-    "cod": 17.827
+    "cod": 17.827,
+    "haddock": 10.784,
+    "redfish": 2.6,
+    "saithe": 1,
+    "total": 40.561
   },
   {
     "year": 2000,
     "week": "2000-03-20",
-    "cod": 10.188
+    "cod": 10.188,
+    "haddock": 10.625,
+    "redfish": 7.8,
+    "saithe": 3.25,
+    "total": 30.805
   },
   {
     "year": 2000,
     "week": "2000-03-27",
-    "cod": 23.127
+    "cod": 23.127,
+    "haddock": 23.126,
+    "redfish": 8.65,
+    "saithe": 4.688,
+    "total": 62.377
   },
   {
     "year": 2000,
     "week": "2000-04-10",
-    "cod": 7.313
+    "cod": 7.313,
+    "haddock": 6.438,
+    "redfish": 4.05,
+    "saithe": 5.7,
+    "total": 20.939
   },
   {
     "year": 2000,
     "week": "2000-04-17",
-    "cod": 12.189
+    "cod": 12.189,
+    "haddock": 3.377,
+    "redfish": 4.275,
+    "saithe": 1.939,
+    "total": 18.811
   },
   {
     "year": 2000,
     "week": "2000-04-24",
-    "cod": 32.338
+    "cod": 32.338,
+    "haddock": 14.751,
+    "redfish": 1.225,
+    "saithe": 7.375,
+    "total": 54.411
   },
   {
     "year": 2000,
     "week": "2000-05-01",
-    "cod": 7.438
+    "cod": 7.438,
+    "haddock": 13.125,
+    "redfish": 1.15,
+    "saithe": 1,
+    "total": 22.219
   },
   {
     "year": 2000,
     "week": "2000-05-08",
-    "cod": 28.128
+    "cod": 28.128,
+    "haddock": 61.503,
+    "redfish": 5.15,
+    "saithe": 11.001,
+    "total": 104.974
   },
   {
     "year": 2000,
     "week": "2000-05-15",
-    "cod": 14.313
+    "cod": 14.313,
+    "haddock": 4,
+    "redfish": 2.65,
+    "saithe": 1.875,
+    "total": 19.838
   },
   {
     "year": 2000,
     "week": "2000-05-22",
-    "cod": 14.627
+    "cod": 14.627,
+    "haddock": 18.065,
+    "redfish": 5.075,
+    "saithe": 16.439,
+    "total": 54.772
   },
   {
     "year": 2000,
     "week": "2000-05-29",
-    "cod": 8.345
+    "cod": 8.345,
+    "haddock": 7.626,
+    "redfish": 2.775,
+    "saithe": 8.063,
+    "total": 24.438
   },
   {
     "year": 2000,
     "week": "2000-06-05",
-    "cod": 8.376
+    "cod": 8.376,
+    "haddock": 9.813,
+    "redfish": 9.85,
+    "saithe": 7.875,
+    "total": 33.236
   },
   {
     "year": 2000,
     "week": "2000-06-19",
-    "cod": 2.375
+    "cod": 2.375,
+    "haddock": 3.375,
+    "redfish": 1.45,
+    "saithe": 2.375,
+    "total": 6.701
   },
   {
     "year": 2000,
     "week": "2000-07-03",
-    "cod": 5.938
+    "cod": 5.938,
+    "haddock": 2.375,
+    "redfish": 1.7,
+    "saithe": 2.25,
+    "total": 9.389
   },
   {
     "year": 2000,
     "week": "2000-08-14",
-    "cod": 4.064
+    "cod": 4.064,
+    "haddock": 18.439,
+    "redfish": 7.6,
+    "saithe": 1.5,
+    "total": 29.004
   },
   {
     "year": 2000,
     "week": "2000-08-21",
-    "cod": 5.126
+    "cod": 5.126,
+    "haddock": 9.798,
+    "redfish": 10.175,
+    "saithe": 10.251,
+    "total": 32.451
   },
   {
     "year": 2000,
     "week": "2000-08-28",
-    "cod": 3.876
+    "cod": 3.876,
+    "haddock": 7.813,
+    "redfish": 7.71,
+    "saithe": 2.314,
+    "total": 18.933
   },
   {
     "year": 2000,
     "week": "2000-09-04",
-    "cod": 2.813
+    "cod": 2.813,
+    "haddock": 14.375,
+    "redfish": 1.68,
+    "saithe": 24.875,
+    "total": 40.743
   },
   {
     "year": 2000,
     "week": "2000-09-11",
-    "cod": 5.19
+    "cod": 5.19,
+    "haddock": 19.323,
+    "redfish": 5.675,
+    "saithe": 19.313,
+    "total": 46.846
   },
   {
     "year": 2000,
     "week": "2000-09-18",
-    "cod": 1.627
+    "cod": 1.627,
+    "haddock": 7.814,
+    "redfish": 4.475,
+    "saithe": 7.814,
+    "total": 18.73
   },
   {
     "year": 2000,
     "week": "2000-09-25",
-    "cod": 6.066
+    "cod": 6.066,
+    "haddock": 7.814,
+    "redfish": 8.33,
+    "saithe": 1.565,
+    "total": 21.308
   },
   {
     "year": 2000,
     "week": "2000-10-02",
-    "cod": 2.127
+    "cod": 2.127,
+    "haddock": 8.625,
+    "redfish": 3.25,
+    "saithe": 2.188,
+    "total": 13.377
   },
   {
     "year": 2000,
     "week": "2000-10-09",
-    "cod": 4.877
+    "cod": 4.877,
+    "haddock": 7.503,
+    "redfish": 7.4,
+    "saithe": 1.563,
+    "total": 18.686
   },
   {
     "year": 2000,
     "week": "2000-10-16",
-    "cod": 2.064
+    "cod": 2.064,
+    "haddock": 4.752,
+    "redfish": 2.55,
+    "saithe": 1.125,
+    "total": 7.522
   },
   {
     "year": 2000,
     "week": "2000-10-23",
-    "cod": 4.793
+    "cod": 4.793,
+    "haddock": 23.322,
+    "redfish": 8,
+    "saithe": 5.875,
+    "total": 39.27
   },
   {
     "year": 2000,
     "week": "2000-10-30",
-    "cod": 1.25
+    "cod": 1.25,
+    "haddock": 7,
+    "redfish": 1,
+    "saithe": 3.375,
+    "total": 9.625
   },
   {
     "year": 2000,
     "week": "2000-11-06",
-    "cod": 4.191
+    "cod": 4.191,
+    "haddock": 10.267,
+    "redfish": 8.6,
+    "saithe": 1.125,
+    "total": 21.87
   },
   {
     "year": 2000,
     "week": "2000-11-13",
-    "cod": 3.879
+    "cod": 3.879,
+    "haddock": 18.439,
+    "redfish": 5.856,
+    "saithe": 6.758,
+    "total": 32.12
   },
   {
     "year": 2000,
     "week": "2000-11-20",
-    "cod": 4.064
+    "cod": 4.064,
+    "haddock": 7.689,
+    "redfish": 5.05,
+    "saithe": 1.75,
+    "total": 15.803
   },
   {
     "year": 2000,
     "week": "2000-12-04",
-    "cod": 2.38
+    "cod": 2.38,
+    "haddock": 8.501,
+    "redfish": 4.025,
+    "saithe": 1.25,
+    "total": 13.156
   },
   {
     "year": 2000,
     "week": "2000-12-11",
-    "cod": 8.708
+    "cod": 8.708,
+    "haddock": 8.44,
+    "redfish": 7.15,
+    "saithe": 23.439,
+    "total": 44.892
   },
   {
     "year": 2000,
     "week": "2000-12-18",
-    "cod": 7.785
+    "cod": 7.785,
+    "haddock": 4.064,
+    "redfish": 3.335,
+    "saithe": 7.813,
+    "total": 20.307
   },
   {
     "year": 2000,
     "week": "2000-12-25",
-    "cod": 2.95
+    "cod": 2.95,
+    "haddock": 2.439,
+    "redfish": 3.656,
+    "saithe": 1.25,
+    "total": 7.364
   }
 ]
