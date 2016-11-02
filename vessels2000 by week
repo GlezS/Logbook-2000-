@@ -1,0 +1,99 @@
+library(Logbooks)
+library(LogbooksTranslate)
+library(data.table)
+library(dplyr) 
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+
+# Translate
+botnv<- translate.botnv()
+
+botnv00<-filter(botnv, year==2000)  #filter of year 2000
+botnv00 <- arrange(botnv00,  year, landing.month, landing.day) # arrange, reordered by day, month and year.
+botnv00 <- 
+  botnv00%>%
+  filter(!is.na(lat)) %>%
+  mutate(region = ifelse(lat<65 & lon < -19, "SW",
+                         ifelse(lat < 65 & lon >= -19, 'SE',
+                                ifelse(lat >= 65 & lon < -19, 'NW',
+                                       'NE'))),
+         quarter = ifelse(landing.month <= 3, 1,
+                          ifelse(landing.month <= 6, 2,
+                                 ifelse(landing.month <= 9, 3,
+                                        4)))) # botv + regions+quarters
+
+botnvSw<-filter(botnv00, region=="SW")
+
+#values for create the data by weeks,
+botnvSw<- unite(botnvSw, date, 
+                year, landing.month, landing.day, 
+                sep='-', remove=F)
+botnvSw$date <- as.Date(botnvSw$date)
+botnvSw$week <- as.Date(cut(botnvSw$date, breaks='week'))
+botnvSw <- botnvSw %>% 
+  group_by(year, week, ship.number) %>% 
+  summarize(cod=sum(cod, na.mr=T),
+            haddock=sum(haddock, na.mr= T),
+            redfish=sum(redfish, na.mr=T),
+            saithe=sum(saithe, na.mr= T),
+            total=sum(total, na.mr= T))
+
+#botnvS<- select(botnv00.12, ship.number, date, landing.day, landing.month, year, dab, deep.redfish, flatfish , greenland.halibut, gr.silver.smelt, spotted.catfish, redfish, tusk, blue.whiting, ling, halibut, plaice, monkfish, rough.dab, catfish, cod, lemon.sole, saithe, haddock, total, yday, week, region, quarter) #selection of variables for reduce the database
+fish.effort <- 
+  botnvSw %>%
+  group_by(ship.number) %>%
+  summarize(n=n()) %>%
+  filter(n > 40) # o 36 por ejemplo
+
+bt.sub <-
+  botnvSw %>%
+  filter(ship.number %in% fish.effort$ship.number)
+
+#vessel158
+botnvSw158<- filter(botnvSw, ship.number=="158")
+botnvSw158<- select(botnvSw158, week, cod, haddock, redfish, saithe, total)
+plotweek158 <- gather(botnvSw158, key = species, value = catch, cod, haddock, redfish, saithe, total) 
+ggplot(data= plotweek158, aes( x= week,  y=catch,  cod, haddock, redfish, saithe, total, color=species ))+
+  geom_line() 
+
+library(dygraphs)
+dygraph(botnvSw158) %>% dyRangeSelector()
+
+#vessel1645
+botnvSw1645<- filter(botnvSw, ship.number=="1645")
+botnvSw1645<- select(botnvSw1645, week, cod, haddock, redfish, saithe, total)
+plotweek1645<- gather(botnvSw1645, key = species, value = catch, cod, haddock, redfish, saithe, total) 
+ggplot(data= plotweek1645, aes( x= week,  y=catch,  cod, haddock, redfish, saithe, total, color=species ))+
+  geom_line() 
+
+#vessel1743
+botnvSw1743<- filter(botnvSw, ship.number=="1743")
+botnvSw1743<- select(botnvSw1743, week, cod, haddock, redfish, saithe, total)
+plotweek1743 <- gather(botnvSw1743, key = species, value = catch, cod, haddock, redfish, saithe, total) 
+ggplot(data= plotweek174, aes( x= week,  y=catch,  cod, haddock, redfish, saithe, total, color=species ))+
+  geom_line() 
+
+#vessel2048
+botnvSw2048<- filter(botnvSw, ship.number=="2048")
+botnvSw2048<- select(botnvSw2048, week, cod, haddock, redfish, saithe, total)
+plotweek2048 <- gather(botnvSw2048, key = species, value = catch, cod, haddock, redfish, saithe, total) 
+ggplot(data= plotweek2048, aes( x= week,  y=catch,  cod, haddock, redfish, saithe, total, color=species ))+
+  geom_line() 
+
+
+
+#data to json
+#install
+install.packages("jsonlite", repos="http://cran.r-project.org")
+
+#load
+library(jsonlite)
+
+#convert object to json
+botnvSw158.json <- toJSON(botnvSw158, pretty=TRUE)
+cat(myjson)
+
+#convert json back to object
+botnvSw158 <- fromJSON(botnvSw158.json)
+print(botnvSw158)
