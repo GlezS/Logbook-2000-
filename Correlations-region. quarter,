@@ -1,0 +1,115 @@
+
+[
+  {
+    "SOURTHWEST.date": "2009-1",
+    "NORTHWEST.corCPUE": 0.5563,
+    "NORTHEAST.corCPUE": -0.8148,
+    "SOURTHWEST.corCPUE": 0.9563,
+    "SOURTHEAST.corCPUE": 0.717
+  },
+  {
+    "SOURTHWEST.date": "2009-2",
+    "NORTHWEST.corCPUE": 0.9522,
+    "NORTHEAST.corCPUE": 0.3307,
+    "SOURTHWEST.corCPUE": 0.8879,
+    "SOURTHEAST.corCPUE": 0.1638
+  },
+  {
+    "SOURTHWEST.date": "2009-3",
+    "NORTHWEST.corCPUE": 0.1967,
+    "NORTHEAST.corCPUE": 0.7264,
+    "SOURTHWEST.corCPUE": 0.901,
+    "SOURTHEAST.corCPUE": 0.9504
+  },
+  {
+    "SOURTHWEST.date": "2009-4",
+    "NORTHWEST.corCPUE": 0.8372,
+    "NORTHEAST.corCPUE": -0.8427,
+    "SOURTHWEST.corCPUE": 0.9488,
+    "SOURTHEAST.corCPUE": 0.9989
+  },
+  {
+    "SOURTHWEST.date": "2010-1",
+    "NORTHWEST.corCPUE": 0.7726,
+    "NORTHEAST.corCPUE": -0.7258,
+    "SOURTHWEST.corCPUE": 0.4952,
+    "SOURTHEAST.corCPUE": -0.8491
+  },
+  {
+    "SOURTHWEST.date": "2010-2",
+    "NORTHWEST.corCPUE": 0.7596,
+    "NORTHEAST.corCPUE": -0.6905,
+    "SOURTHWEST.corCPUE": 0.9523,
+    "SOURTHEAST.corCPUE": -0.4858
+  },
+  {
+    "SOURTHWEST.date": "2010-3",
+    "NORTHWEST.corCPUE": -0.061,
+    "NORTHEAST.corCPUE": 0.6951,
+    "SOURTHWEST.corCPUE": -0.1648,
+    "SOURTHEAST.corCPUE": 0.5081
+  },
+  {
+    "SOURTHWEST.date": "2010-4",
+    "NORTHWEST.corCPUE": 0.4552,
+    "NORTHEAST.corCPUE": 0.8123,
+    "SOURTHWEST.corCPUE": 0.8731,
+    "SOURTHEAST.corCPUE": -0.2031
+  },
+  {
+    "SOURTHWEST.date": "2011-1",
+    "NORTHWEST.corCPUE": 0.5834,
+    "NORTHEAST.corCPUE": 0.6032,
+    "SOURTHWEST.corCPUE": 0.6286,
+    "SOURTHEAST.corCPUE": -0.3214
+  },
+  {
+    "SOURTHWEST.date": "2011-2",
+    "NORTHWEST.corCPUE": 0.6568,
+    "NORTHEAST.corCPUE": 0.7484,
+    "SOURTHWEST.corCPUE": 0.9834,
+    "SOURTHEAST.corCPUE": 0.0162
+  },
+  {
+    "SOURTHWEST.date": "2011-3",
+    "NORTHWEST.corCPUE": -0.0384,
+    "NORTHEAST.corCPUE": 0.8598,
+    "SOURTHWEST.corCPUE": 0.3216,
+    "SOURTHEAST.corCPUE": 0.5361
+  },
+  {
+    "SOURTHWEST.date": "2011-4",
+    "NORTHWEST.corCPUE": 0.589,
+    "NORTHEAST.corCPUE": 0.6814,
+    "SOURTHWEST.corCPUE": 0.8687,
+    "SOURTHEAST.corCPUE": 0.593
+  },
+  {
+    "SOURTHWEST.date": "2012-1",
+    "NORTHWEST.corCPUE": 0.8272,
+    "NORTHEAST.corCPUE": -0.997,
+    "SOURTHWEST.corCPUE": 0.8041,
+    "SOURTHEAST.corCPUE": -0.8658
+  },
+  {
+    "SOURTHWEST.date": "2012-2",
+    "NORTHWEST.corCPUE": 0.0896,
+    "NORTHEAST.corCPUE": 0.237,
+    "SOURTHWEST.corCPUE": 0.5479,
+    "SOURTHEAST.corCPUE": -0.9234
+  },
+  {
+    "SOURTHWEST.date": "2012-3",
+    "NORTHWEST.corCPUE": -0.949,
+    "NORTHEAST.corCPUE": 0.2284,
+    "SOURTHWEST.corCPUE": -0.0102,
+    "SOURTHEAST.corCPUE": -0.8969
+  },
+  {
+    "SOURTHWEST.date": "2012-4",
+    "NORTHWEST.corCPUE": 0.8609,
+    "NORTHEAST.corCPUE": -0.4428,
+    "SOURTHWEST.corCPUE": 0.7526,
+    "SOURTHEAST.corCPUE": 0.8414
+  }
+]
