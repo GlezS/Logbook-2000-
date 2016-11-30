@@ -1,0 +1,829 @@
+# November 2, The next step seems to be to estimate catchabilities: \hat{q}_{sfyr}=\frac{U_{sfyr}}{B_{sy}},
+# where f=fleet, y=year, s=species (start with cod, haddock), r=region (start with SW, NE, SE, NW), U=CPUE from the logbooks (start with an average across all vessels for the given year, species,region, fleet).
+# Oh, and each season separately (missing index of quarter).
+# B=annual biomass from the MRI assessment reports.
+# Later analyse how this changes in time (q vs y) and the differences in catchability between regions and differences in relative catchability of cod and haddock between regions. 
+
+#library for use
+library(Logbooks)
+library(LogbooksTranslate) # traslate by Paul
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+library(data.table)
+
+#start with bottom trawl
+botnv<- translate.botnv()
+#Filter the data by years 2009-2012
+botnv09.12<-filter(botnv, year>=2009 & year<=2012)
+#arrane, for reorder by day, month and year
+botnv09.12<-arrange(botnv09.12, year, landing.month, landing.day, fishing.day)
+# create areas by region= SW, NE, SE, NW, and made an analisis one by one star with SW
+botnv09.12<- 
+  botnv09.12%>%
+  filter(!is.na(lat))%>%
+  mutate(region= ifelse (lat<65 & lon< -19, "SW",
+                         ifelse(lat < 65 & lon >= -19, 'SE',
+                                ifelse( lat >= 65 & lon < -19, 'NW',
+                                        'NE'))),
+         quarter = ifelse(landing.month <= 3, 1,
+                          ifelse(landing.month <= 6, 2,
+                                 ifelse(landing.month <= 9, 3,
+                                        4))), # botv + regions+quarters
+week = ifelse(landing.day <= 7, 1,
+                 ifelse(landing.day<= 14, 2,
+                        ifelse(landing.day <=21, 3,
+                               4)))) # botv + regions+quarters
+
+
+# Data specific or Iceland SW yea 2009-2012 by weeks and quartes
+
+botnvSW<- filter(botnv09.12, region=="SW")
+#botnvSW<- unite(botnvSW, date, 
+                #year, landing.month, landing.day, 
+                #sep='-', remove=F)
+#date <- as.POSIXlt(as.Date(botnvSW$date))
+#yday <- unclass(date)$yday
+#botnvSW$yday <- yday
+#botnvSW <- mutate(botnvSW, week = ceiling(yday / 7))
+#botnvSW$dates <- as.Date(botnvSW$yday)
+#botnvSW$week <- as.Date(cut(botnvSW$yday, breaks='weeks'))
+
+
+#botnvSW <- unite(botnvSW, date, 
+               #year, landing.month, landing.day, 
+               #sep='-', remove=F)
+#botnvSW$date <- as.Date(botnvSW$date)
+#botnvSW$week <- as.Date(cut(botnvSW$date, breaks='weeks'))
+#botnvSW <- botnvSW %>%group_by (year, quarter, weeks) %>% 
+
+botnvSW<- unite(botnvSW, date, 
+                  year, quarter, week, 
+                  sep='-', remove=F)
+botnvSW$date <- as.Date(botnvSW$date)
+botnvSW <- botnvSW %>%group_by (year, quarter, weeks) %>% 
+
+
+
+SW <- 
+  botnvSW %>%
+  group_by(date, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(date, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+codSW <- 
+  botnvSW %>%
+  group_by(date, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+haddockSW <- 
+  botnvSW %>%
+  group_by(date , ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(date ) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+trawtimeSW <- 
+  botnvSW %>%
+  group_by(date, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+SW<- Reduce(merge, list(codSW, haddockSW, trawtimeSW))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+SW<- mutate(SW, CPUEcod = Catch.cod / f.trawl.time)
+SW<- mutate(SW, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+PLOTSW <- gather(SW, key = species, value = catch, CPUEcod, CPUEhaddock) 
+PLOTSW <- select(PLOTSW, date, species, catch) 
+
+ggplot(data= PLOTSW, aes( x= date,  y=catch, CPUEcod, CPUEhaddock, color=species ))+
+  geom_line() + 
+  ggtitle("CPUE SW")
+
+
+#######################################################################################
+# correlation
+
+
+Y1Q <- SW[1:4,]
+Y2Q <- SW[5:8,]
+Y3Q <- SW[9:12,]
+Y4Q <- SW[13:16,]
+Y5Q <- SW[17:20,]
+Y6Q <- SW[21:24,]
+Y7Q <- SW[25:28,]
+Y8Q <- SW[29:32,]
+Y9Q <- SW[33:36,]
+Y10Q <- SW[37:40,]
+Y11Q <- SW[41:44,]
+Y12Q <- SW[45:48,]
+Y13Q <- SW[49:52,]
+Y14Q <- SW[53:56,]
+Y15Q <- SW[57:60,]
+Y16Q <- SW[61:64,]
+
+cor(Y1Q$CPUEcod, Y1Q$CPUEhaddock)
+cor(Y2Q$CPUEcod, Y2Q$CPUEhaddock) 
+cor(Y3Q$CPUEcod, Y3Q$CPUEhaddock) 
+cor(Y4Q$CPUEcod, Y4Q$CPUEhaddock)
+cor(Y5Q$CPUEcod, Y5Q$CPUEhaddock)
+cor(Y6Q$CPUEcod, Y6Q$CPUEhaddock)
+cor(Y7Q$CPUEcod, Y7Q$CPUEhaddock)
+cor(Y8Q$CPUEcod, Y8Q$CPUEhaddock)
+cor(Y9Q$CPUEcod, Y9Q$CPUEhaddock) 
+cor(Y10Q$CPUEcod, Y10Q$CPUEhaddock) 
+cor(Y11Q$CPUEcod, Y11Q$CPUEhaddock)
+cor(Y12Q$CPUEcod, Y12Q$CPUEhaddock) 
+cor(Y13Q$CPUEcod, Y13Q$CPUEhaddock) 
+cor(Y14Q$CPUEcod, Y14Q$CPUEhaddock) 
+cor(Y15Q$CPUEcod, Y15Q$CPUEhaddock)
+cor(Y16Q$CPUEcod, Y16Q$CPUEhaddock)
+
+
+
+
+
+corCPUE<-c( 0.9563334, 0.8879138, 0.9010383, 0.9488058, 0.4952352, 0.9522961, -0.1648029, 0.8731466, 0.6285787,
+                  0.9833922, 0.3215643, 0.8686993, 0.8041273,  0.5478842,  -0.01024923,  0.7526055)
+
+
+SOURTHWEST <- 
+  botnvSW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+CSW <- 
+  botnvSW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+HSW <- 
+  botnvSW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+ESW <- 
+  botnvSW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+SOURTHWEST<- Reduce(merge, list(CSW, HSW, ESW))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+SOURTHWEST<- mutate(SOURTHWEST, CPUEcod = Catch.cod / f.trawl.time)
+SOURTHWEST<- mutate(SOURTHWEST, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+SOURTHWEST<-data.frame(SOURTHWEST, corCPUE)
+
+SOURTHWEST <- unite(SOURTHWEST, date, 
+               year, quarter, 
+               sep='-', remove=F)
+SOURTHWEST$date <- as.Date(SOURTHWEST$date)
+SOURTHWEST$quarters <- as.Date(cut(SOURTHWEST$date, breaks='quarters'))
+
+
+PLOTSW1 <- gather(SOURTHWEST, key = species, value = catch, CPUEcod, CPUEhaddock, corCPUE) 
+PLOTSW1 <- select(PLOTSW1, date, species, catch) 
+
+
+#############North west
+
+botnvNW<- filter(botnv09.12, region=="NW")
+
+
+botnvNW<- unite(botnvNW, date, 
+                year, quarter, week, 
+                sep='-', remove=F)
+botnvNW$date <- as.Date(botnvNW$date)
+botnvNW <- botnvNW %>%group_by (year, quarter, weeks) %>% 
+  
+  
+  
+  NW <- 
+  botnvNW %>%
+  group_by(date, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(date, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+codNW <- 
+  botnvNW %>%
+  group_by(date, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+haddockNW <- 
+  botnvNW %>%
+  group_by(date , ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(date ) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+trawtimeNW <- 
+  botnvNW %>%
+  group_by(date, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+NW<- Reduce(merge, list(codNW, haddockNW, trawtimeNW))
+
+
+#CPUE=  catch in period t NW/ trawtime in period t NW cpue=y/f
+NW<- mutate(NW, CPUEcod = Catch.cod / f.trawl.time)
+NW<- mutate(NW, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+PLOTNW <- gather(NW, key = species, value = catch, CPUEcod, CPUEhaddock) 
+PLOTNW <- select(PLOTNW, date, species, catch) 
+
+ggplot(data= PLOTNW, aes( x= date,  y=catch, CPUEcod, CPUEhaddock, color=species ))+
+  geom_line() + 
+  ggtitle("CPUE NW")
+
+
+#######################################################################################
+# correlation
+
+
+Y1Q <- NW[1:4,]
+Y2Q <- NW[5:8,]
+Y3Q <- NW[9:12,]
+Y4Q <- NW[13:16,]
+Y5Q <- NW[17:20,]
+Y6Q <- NW[21:24,]
+Y7Q <- NW[25:28,]
+Y8Q <- NW[29:32,]
+Y9Q <- NW[33:36,]
+Y10Q <- NW[37:40,]
+Y11Q <- NW[41:44,]
+Y12Q <- NW[45:48,]
+Y13Q <- NW[49:52,]
+Y14Q <- NW[53:56,]
+Y15Q <- NW[57:60,]
+Y16Q <- NW[61:64,]
+
+cor(Y1Q$CPUEcod, Y1Q$CPUEhaddock)
+cor(Y2Q$CPUEcod, Y2Q$CPUEhaddock) 
+cor(Y3Q$CPUEcod, Y3Q$CPUEhaddock) 
+cor(Y4Q$CPUEcod, Y4Q$CPUEhaddock)
+cor(Y5Q$CPUEcod, Y5Q$CPUEhaddock)
+cor(Y6Q$CPUEcod, Y6Q$CPUEhaddock)
+cor(Y7Q$CPUEcod, Y7Q$CPUEhaddock)
+cor(Y8Q$CPUEcod, Y8Q$CPUEhaddock)
+cor(Y9Q$CPUEcod, Y9Q$CPUEhaddock) 
+cor(Y10Q$CPUEcod, Y10Q$CPUEhaddock) 
+cor(Y11Q$CPUEcod, Y11Q$CPUEhaddock)
+cor(Y12Q$CPUEcod, Y12Q$CPUEhaddock) 
+cor(Y13Q$CPUEcod, Y13Q$CPUEhaddock) 
+cor(Y14Q$CPUEcod, Y14Q$CPUEhaddock) 
+cor(Y15Q$CPUEcod, Y15Q$CPUEhaddock)
+cor(Y16Q$CPUEcod, Y16Q$CPUEhaddock)
+
+
+
+
+
+corCPUE<-c( 0.5562595, 0.952172, 0.1966702, 0.8371862, 0.7725933, 0.759649, -0.06103776, 0.4552133, 0.5834208,
+            0.656845, -0.03844404, 0.5890063, 0.827204,  0.08964473,  -0.9489526,  0.8609357)
+
+
+NORTHWEST <- 
+  botnvNW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+CNW <- 
+  botnvNW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+HNW <- 
+  botnvNW %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+ENW <- 
+  botnvNW%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+NORTHWEST<- Reduce(merge, list(CNW, HNW, ENW))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+NORTHWEST<- mutate(NORTHWEST, CPUEcod = Catch.cod / f.trawl.time)
+NORTHWEST<- mutate(NORTHWEST, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+NORTHWEST<-data.frame(NORTHWEST, corCPUE)
+
+
+
+
+
+#############Sourt East
+
+botnvSE<- filter(botnv09.12, region=="SE")
+
+
+botnvSE<- unite(botnvSE, date, 
+                year, quarter, week, 
+                sep='-', remove=F)
+botnvSE$date <- as.Date(botnvSE$date)
+botnvSE <- botnvSE %>%group_by (year, quarter, weeks) %>% 
+  
+  
+  SE <- 
+  botnvSE %>%
+  group_by(date, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(date, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+codSE <- 
+  botnvSE %>%
+  group_by(date, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+haddockSE <- 
+  botnvSE %>%
+  group_by(date , ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(date ) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+trawtimeSE <- 
+  botnvSE %>%
+  group_by(date, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+SE<- Reduce(merge, list(codSE, haddockSE, trawtimeSE))
+
+
+#CPUE=  catch in period t NW/ trawtime in period t NW cpue=y/f
+SE<- mutate(SE, CPUEcod = Catch.cod / f.trawl.time)
+SE<- mutate(SE, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+PLOTSE <- gather(SE, key = species, value = catch, CPUEcod, CPUEhaddock) 
+PLOTSE <- select(PLOTSE, date, species, catch) 
+
+ggplot(data= PLOTSE, aes( x= date,  y=catch, CPUEcod, CPUEhaddock, color=species ))+
+  geom_line() + 
+  ggtitle("CPUE SE")
+
+#ggplot(PLOTSE, aes(date, catch)) + 
+ # geom_line(aes(colour = species, group = species))
+#######################################################################################
+# correlation
+
+
+Y1Q <- SE[1:4,]
+Y2Q <- SE[5:8,]
+Y3Q <- SE[9:12,]
+Y4Q <- SE[13:16,]
+Y5Q <- SE[17:20,]
+Y6Q <- SE[21:24,]
+Y7Q <- SE[25:28,]
+Y8Q <- SE[29:32,]
+Y9Q <- SE[33:36,]
+Y10Q <- SE[37:40,]
+Y11Q <- SE[41:44,]
+Y12Q <- SE[45:48,]
+Y13Q <- SE[49:52,]
+Y14Q <- SE[53:56,]
+Y15Q <- SE[57:60,]
+Y16Q <- SE[61:64,]
+
+cor(Y1Q$CPUEcod, Y1Q$CPUEhaddock)
+cor(Y2Q$CPUEcod, Y2Q$CPUEhaddock) 
+cor(Y3Q$CPUEcod, Y3Q$CPUEhaddock) 
+cor(Y4Q$CPUEcod, Y4Q$CPUEhaddock)
+cor(Y5Q$CPUEcod, Y5Q$CPUEhaddock)
+cor(Y6Q$CPUEcod, Y6Q$CPUEhaddock)
+cor(Y7Q$CPUEcod, Y7Q$CPUEhaddock)
+cor(Y8Q$CPUEcod, Y8Q$CPUEhaddock)
+cor(Y9Q$CPUEcod, Y9Q$CPUEhaddock) 
+cor(Y10Q$CPUEcod, Y10Q$CPUEhaddock) 
+cor(Y11Q$CPUEcod, Y11Q$CPUEhaddock)
+cor(Y12Q$CPUEcod, Y12Q$CPUEhaddock) 
+cor(Y13Q$CPUEcod, Y13Q$CPUEhaddock) 
+cor(Y14Q$CPUEcod, Y14Q$CPUEhaddock) 
+cor(Y15Q$CPUEcod, Y15Q$CPUEhaddock)
+cor(Y16Q$CPUEcod, Y16Q$CPUEhaddock)
+
+
+
+
+
+corCPUE<-c( 0.7170194, 0.1637577, 0.9503672, 0.9988604, -0.8491402, -0.4858224, 0.5081447, -0.2030682,-0.3214145,
+            0.01616937, 0.5361267,  0.5930096,  -0.865781,  -0.9234244,  -0.8969178, 0.841373)
+
+
+SOURTHEAST <- 
+  botnvSE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+CSE <- 
+  botnvSE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+HSE <- 
+  botnvSE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+ESE <- 
+  botnvSE%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+SOURTHEAST<- Reduce(merge, list(CSE, HSE, ESE))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+SOURTHEAST<- mutate(SOURTHEAST, CPUEcod = Catch.cod / f.trawl.time)
+SOURTHEAST<- mutate(SOURTHEAST, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+SOURTHEAST<-data.frame(SOURTHEAST, corCPUE)
+
+
+
+#############North East
+
+botnvNE<- filter(botnv09.12, region=="NE")
+
+
+botnvNE<- unite(botnvNE, date, 
+                year, quarter, week, 
+                sep='-', remove=F)
+botnvNE$date <- as.Date(botnvNE$date)
+botnvNE <- botnvNE %>%group_by (year, quarter, weeks) %>% 
+  
+  
+  
+  NE <- 
+  botnvNE %>%
+  group_by(date, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(date, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+codNE <- 
+  botnvNE %>%
+  group_by(date, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+haddockNE <- 
+  botnvNE %>%
+  group_by(date , ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(date ) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+trawtimeNE <- 
+  botnvNE %>%
+  group_by(date, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+NE<- Reduce(merge, list(codNE, haddockNE, trawtimeNE))
+
+
+#CPUE=  catch in period t NW/ trawtime in period t NW cpue=y/f
+NE<- mutate(NE, CPUEcod = Catch.cod / f.trawl.time)
+NE<- mutate(NE, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+PLOTNE <- gather(NE, key = species, value = catch, CPUEcod, CPUEhaddock) 
+PLOTNE <- select(PLOTNE, date, species, catch) 
+
+ggplot(data= PLOTNE, aes( x= date,  y=catch, CPUEcod, CPUEhaddock, color=species ))+
+  geom_line() + 
+  ggtitle("CPUE NE")
+
+
+#######################################################################################
+# correlation
+
+
+Y1Q <- NE[1:4,]
+Y2Q <- NE[5:8,]
+Y3Q <- NE[9:12,]
+Y4Q <- NE[13:16,]
+Y5Q <- NE[17:20,]
+Y6Q <- NE[21:24,]
+Y7Q <- NE[25:28,]
+Y8Q <- NE[29:32,]
+Y9Q <- NE[33:36,]
+Y10Q <- NE[37:40,]
+Y11Q <- NE[41:44,]
+Y12Q <- NE[45:48,]
+Y13Q <- NE[49:52,]
+Y14Q <- NE[53:56,]
+Y15Q <- NE[57:60,]
+Y16Q <- NE[61:64,]
+
+cor(Y1Q$CPUEcod, Y1Q$CPUEhaddock)
+cor(Y2Q$CPUEcod, Y2Q$CPUEhaddock) 
+cor(Y3Q$CPUEcod, Y3Q$CPUEhaddock) 
+cor(Y4Q$CPUEcod, Y4Q$CPUEhaddock)
+cor(Y5Q$CPUEcod, Y5Q$CPUEhaddock)
+cor(Y6Q$CPUEcod, Y6Q$CPUEhaddock)
+cor(Y7Q$CPUEcod, Y7Q$CPUEhaddock)
+cor(Y8Q$CPUEcod, Y8Q$CPUEhaddock)
+cor(Y9Q$CPUEcod, Y9Q$CPUEhaddock) 
+cor(Y10Q$CPUEcod, Y10Q$CPUEhaddock) 
+cor(Y11Q$CPUEcod, Y11Q$CPUEhaddock)
+cor(Y12Q$CPUEcod, Y12Q$CPUEhaddock) 
+cor(Y13Q$CPUEcod, Y13Q$CPUEhaddock) 
+cor(Y14Q$CPUEcod, Y14Q$CPUEhaddock) 
+cor(Y15Q$CPUEcod, Y15Q$CPUEhaddock)
+cor(Y16Q$CPUEcod, Y16Q$CPUEhaddock)
+
+
+corCPUE<-c( -0.8148289, 0.3307066, 0.7263925, -0.8427403, -0.7258225, -0.6904913, 0.6950855, 0.812298, 0.6031951,
+            0.7483944, 0.859801, 0.6813992,  -0.9970052,  0.2370234,  0.2283909,   -0.442821)
+
+
+NORTHEAST <- 
+  botnvNE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+CNE <- 
+  botnvNE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+HNE <- 
+  botnvNE %>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+ENE <- 
+  botnvNE%>%
+  group_by(year, quarter, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(year, quarter) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+NORTHEAST<- Reduce(merge, list(CNE, HNE, ENE))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+NORTHEAST<- mutate(NORTHEAST, CPUEcod = Catch.cod / f.trawl.time)
+NORTHEAST<- mutate(NORTHEAST, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+NORTHEAST<-data.frame(NORTHEAST, corCPUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#BY YEAR
+
+
+#Filter the data by years 2009-2012
+botnvy09.12<-filter(botnv, year>=2009 & year<=2012)
+#arrane, for reorder by day, month and year
+botnvy09.12<-arrange(botnvy09.12, year, landing.month, landing.day, fishing.day)
+
+
+botnvy09.12<- unite(botnvy09.12, date, 
+                year, 
+                sep='-', remove=F)
+botnvy09.12$date <- as.Date(botnvy09.12$date)
+botnvy09.12 <- botnvy09.12 %>%group_by (year ) %>% 
+  
+  
+  
+YEARBOTNV <- 
+  botnvy09.12 %>%
+  group_by(date, ship.number) %>%
+  summarize(cod=sum(cod),
+            haddock=sum(haddock))%>%
+  group_by(date, ship.number) %>%
+  summarize(nships = n_distinct(ship.number),
+            cod=sum(cod),
+            haddock=sum(haddock))
+
+
+codY <- 
+  botnvy09.12 %>%
+  group_by(date, ship.number) %>%
+  summarize(cod = sum(cod)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.cod = sum(cod))
+
+
+haddockY <- 
+  botnvy09.12%>%
+  group_by(date , ship.number) %>%
+  summarize(haddock = sum(haddock)) %>%
+  group_by(date ) %>%
+  summarize(nships = n_distinct(ship.number),
+            Catch.haddock = sum(haddock))
+
+
+trawtimeY <- 
+  botnvy09.12 %>%
+  group_by(date, ship.number) %>%
+  summarize(f.trawl.time = sum(trawl.time)) %>%
+  group_by(date) %>%
+  summarize(nships = n_distinct(ship.number),
+            f.trawl.time = sum(f.trawl.time))
+YEARBOTNV<- Reduce(merge, list(codY, haddockY, trawtimeY))
+
+
+#CPUE=  catch in period t SW/ trawtime in period t SW cpue=y/f
+YEARBOTNV<- mutate(YEARBOTNV, CPUEcod = Catch.cod / f.trawl.time)
+YEARBOTNV<- mutate(YEARBOTNV, CPUEhaddock= Catch.haddock / f.trawl.time)
+
+
+PLOTYEAR <- gather(YEARBOTNV, key = species, value = catch, CPUEcod, CPUEhaddock) 
+PLOTYEAR <- select(PLOTYEAR, date, species, catch) 
+
+
+#######################################################################################
+
+Correlations<-data.frame(SOURTHWEST$date, NORTHWEST$corCPUE, NORTHEAST$corCPUE, SOURTHWEST$corCPUE, SOURTHEAST$corCPUE)
+
+########################################################3
+
+
+# correlation ESTA MAL ANÓ ES CON TODO POR QUE LA BIOMASA ES TODO ISLANDIA
+
+
+#Y1 <- SOURTHWEST[1:4,]
+#Y2 <- SOURTHWEST[5:8,]
+#Y3 <- SOURTHWEST[9:12,]
+#Y4 <- SOURTHWEST[13:16,]
+
+#cor(Y1$CPUEcod, Y1$CPUEhaddock)
+#cor(Y2$CPUEcod, Y2$CPUEhaddock) 
+#cor(Y3$CPUEcod, Y3$CPUEhaddock) 
+#cor(Y4$CPUEcod, Y4$CPUEhaddock)
+
+#corCPUEy<-c(0.8363891, 0.9357463, 0.9904792, 0.9551436)
+
+#YEARBOTNV<-data.frame(SWy, corCPUEy)
+B3plusH<-c(192, 167, 149, 136)
+HRH<-c(0.56, 0.57, 0.47, 0.41)
+HRC<-c(0.23, 0.20, 0.18, 0.19)
+B4plusC<-c(799, 843, 932, 1047)
+YEARBOTNV<-data.frame(YEARBOTNV, B3plusH, B4plusC, HRC, HRH )
+
+#q=u/B
+
+YEARBOTNV<- mutate(YEARBOTNV, qC= CPUEcod / B4plusC)
+YEARBOTNV<- mutate(YEARBOTNV, qH= CPUEhaddock / B3plusH)
+
+
+###### need correlations######
+
+#Json
+#load
+library(jsonlite)
+
+#convert object to json
+CorrelationsR <- toJSON(Correlations, pretty=TRUE)
+cat(CorrelationsR)
